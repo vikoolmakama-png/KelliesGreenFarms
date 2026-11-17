@@ -1209,29 +1209,43 @@ def claim_reward(activation_id):
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
+    ADMIN_USERNAME = "kellie@gmail.com"
+    ADMIN_PASSWORD = "Kellie@50"
+
     if request.method == "POST":
         identity = request.form.get("identity", "").strip().lower()
         password = request.form.get("password", "")
 
-        con = get_db()
-        cur = con.cursor()
-        try:
-            cur.execute("""
-                SELECT id, fullname, username, password_hash, is_admin
-                FROM users
-                WHERE email=%s OR username=%s
-            """, (identity, identity))
-            user = cur.fetchone()
-        finally:
-            cur.close()
-            con.close()
+        if identity == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            con = get_db()
+            cur = con.cursor()
+            try:
+                cur.execute("""
+                    SELECT id, fullname, username
+                    FROM users
+                    WHERE LOWER(email)=%s
+                """, (ADMIN_USERNAME,))
+                user = cur.fetchone()
 
-        if user and user[4] and check_password_hash(user[3], password):
-            session.clear()
-            session["admin_user_id"] = user[0]
-            session["admin_fullname"] = user[1]
-            session["admin_username"] = user[2]
-            return redirect(url_for("admin_dashboard"))
+                if not user:
+                    flash("Admin account not found in the database.", "error")
+                    return redirect(url_for("admin_login"))
+
+                cur.execute(
+                    "UPDATE users SET is_admin=TRUE WHERE id=%s",
+                    (user[0],)
+                )
+                con.commit()
+
+                session.clear()
+                session["admin_user_id"] = user[0]
+                session["admin_fullname"] = user[1]
+                session["admin_username"] = user[2]
+
+                return redirect(url_for("admin_dashboard"))
+            finally:
+                cur.close()
+                con.close()
 
         flash("Invalid administrator login details.", "error")
         return redirect(url_for("admin_login"))
