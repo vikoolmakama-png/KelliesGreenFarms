@@ -1265,39 +1265,50 @@ def admin_login():
         identity = request.form.get("identity", "").strip().lower()
         password = request.form.get("password", "")
 
-        if identity == ADMIN_USERNAME and password == ADMIN_PASSWORD:
-            con = get_db()
-            cur = con.cursor()
-            try:
-                cur.execute("""
-                    SELECT id, fullname, username
-                    FROM users
-                    WHERE LOWER(email)=%s
-                """, (ADMIN_USERNAME,))
-                user = cur.fetchone()
+        if identity != ADMIN_USERNAME or password != ADMIN_PASSWORD:
+            flash("Invalid administrator login details.", "error")
+            return redirect(url_for("admin_login"))
 
-                if not user:
-                    flash("Admin account not found in the database.", "error")
-                    return redirect(url_for("admin_login"))
+        con = get_db()
+        cur = con.cursor()
 
-                cur.execute(
-                    "UPDATE users SET is_admin=TRUE WHERE id=%s",
-                    (user[0],)
-                )
-                con.commit()
+        try:
+            cur.execute("""
+                INSERT INTO users
+                    (fullname, email, username, password_hash, is_admin, balance)
+                VALUES (%s, %s, %s, %s, TRUE, 0)
+                ON CONFLICT (email)
+                DO UPDATE SET is_admin=TRUE
+                RETURNING id, fullname, username
+            """, (
+                "Kellie's Green Farms Admin",
+                ADMIN_USERNAME,
+                "kellie_admin",
+                generate_password_hash(ADMIN_PASSWORD)
+            ))
 
-                session.clear()
-                session["admin_user_id"] = user[0]
-                session["admin_fullname"] = user[1]
-                session["admin_username"] = user[2]
+            user = cur.fetchone()
 
-                return redirect(url_for("admin_dashboard"))
-            finally:
-                cur.close()
-                con.close()
+            if not user:
+                con.rollback()
+                flash("Could not create administrator account.", "error")
+                return redirect(url_for("admin_login"))
 
-        flash("Invalid administrator login details.", "error")
-        return redirect(url_for("admin_login"))
+            con.commit()
+
+            session.clear()
+            session["admin_user_id"] = user[0]
+            session["admin_fullname"] = user[1]
+            session["admin_username"] = user[2]
+
+            return redirect(url_for("admin_dashboard"))
+
+        except Exception:
+            con.rollback()
+            raise
+        finally:
+            cur.close()
+            con.close()
 
     return render_template_string("""
     <!DOCTYPE html>
@@ -1324,26 +1335,22 @@ def admin_login():
           border: 1px solid #cbd5e1; border-radius: 9px;
         }
         button {
-          width: 100%; padding: 14px; margin-top: 12px;
-          border: 0; border-radius: 9px; color: white;
-          background: #15803d; font-weight: bold;
+          width: 100%; padding: 14px; border: 0;
+          border-radius: 9px; background: #166534;
+          color: white; font-weight: bold;
         }
-        a { display: block; text-align: center; margin-top: 18px; color: #15803d; }
-        .error { color: #dc2626; text-align: center; }
       </style>
     </head>
     <body>
-      <form class="box" method="POST">
-        <h2>🌱 Admin Portal</h2>
-        <p>KELLIE'S GREEN FARMS</p>
-        {% for category, message in get_flashed_messages(with_categories=true) %}
-          <div class="error">{{ message }}</div>
-        {% endfor %}
-        <input name="identity" placeholder="Admin email or username" required>
-        <input name="password" type="password" placeholder="Admin password" required>
-        <button type="submit">Admin Login</button>
-        <a href="/login">Customer Login</a>
-      </form>
+      <div class="box">
+        <h2>Farm Administrator</h2>
+        <p>Sign in to manage the farm</p>
+        <form method="POST">
+          <input name="identity" type="email" placeholder="Admin email" required>
+          <input name="password" type="password" placeholder="Password" required>
+          <button type="submit">Admin Login</button>
+        </form>
+      </div>
     </body>
     </html>
     """)
