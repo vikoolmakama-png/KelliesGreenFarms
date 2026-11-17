@@ -780,6 +780,19 @@ def withdraw():
             con.close()
             return feature_page("Withdrawal", "<p>Insufficient available balance.</p>")
 
+        # Deduct immediately when the withdrawal request is submitted.
+        cur.execute("""
+            UPDATE users
+            SET balance=balance-%s
+            WHERE id=%s AND balance >= %s
+        """, (amount, session["user_id"], amount))
+
+        if cur.rowcount != 1:
+            con.rollback()
+            cur.close()
+            con.close()
+            return feature_page("Withdrawal", "<p>Insufficient available balance.</p>")
+
         cur.execute("""
             INSERT INTO farm_transactions
             (user_id, transaction_type, amount, status, description)
@@ -1607,18 +1620,17 @@ def admin_transaction(transaction_id, action):
                     "UPDATE users SET balance=balance+%s WHERE id=%s",
                     (amount, user_id)
                 )
-            else:
-                if user[0] < amount:
-                    con.rollback()
-                    return "Insufficient balance. Withdrawal not approved.", 400
-
+            # Withdrawal was already deducted when the user submitted it.
+            # Approval only changes its status; do not deduct again.
+            new_status = "completed"
+        else:
+            # Refund a rejected withdrawal.
+            if tx_type == "withdrawal":
                 cur.execute(
-                    "UPDATE users SET balance=balance-%s WHERE id=%s",
+                    "UPDATE users SET balance=balance+%s WHERE id=%s",
                     (amount, user_id)
                 )
 
-            new_status = "completed"
-        else:
             new_status = "rejected"
 
         cur.execute("""
