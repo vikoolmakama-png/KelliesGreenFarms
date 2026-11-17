@@ -49,6 +49,42 @@ def init_db():
     """)
 
     cur.execute("""
+        CREATE TABLE IF NOT EXISTS farm_activations (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            plan_name TEXT NOT NULL,
+            capital NUMERIC(12,2) NOT NULL,
+            daily_reward NUMERIC(12,2) NOT NULL,
+            days_paid INTEGER NOT NULL DEFAULT 0,
+            activated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            next_reward_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            status TEXT NOT NULL DEFAULT 'active'
+        )
+    """)
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS farm_transactions (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            transaction_type TEXT NOT NULL,
+            amount NUMERIC(12,2) NOT NULL,
+            status TEXT NOT NULL DEFAULT 'pending',
+            description TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    cur.execute("""
+        CREATE INDEX IF NOT EXISTS farm_activations_user_idx
+        ON farm_activations(user_id)
+    """)
+
+    cur.execute("""
+        CREATE INDEX IF NOT EXISTS farm_transactions_user_idx
+        ON farm_transactions(user_id)
+    """)
+
+    cur.execute("""
         ALTER TABLE users
         ADD COLUMN IF NOT EXISTS is_admin BOOLEAN NOT NULL DEFAULT FALSE
     """)
