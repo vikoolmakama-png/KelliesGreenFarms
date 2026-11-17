@@ -48,6 +48,16 @@ def init_db():
         ON users(email)
     """)
 
+    cur.execute("""
+        ALTER TABLE users
+        ADD COLUMN IF NOT EXISTS is_admin BOOLEAN NOT NULL DEFAULT FALSE
+    """)
+
+    cur.execute("""
+        ALTER TABLE users
+        ADD COLUMN IF NOT EXISTS referral_reward_paid BOOLEAN NOT NULL DEFAULT FALSE
+    """)
+
     con.commit()
     cur.close()
     con.close()
@@ -1575,6 +1585,8 @@ def logout():
 
 
 
+# Initialize the database when Gunicorn imports this application.
+init_db()
+
 if __name__ == "__main__":
-    init_db()
     app.run(host="0.0.0.0", port=5000, debug=True)
