@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard | Kellie's Green Farms</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial;background:#03170f;color:white;min-height:100vh}
+header{padding:20px 6%;display:flex;justify-content:space-between;align-items:center;background:#08271a;border-bottom:1px solid #24f58a33}
+.logo{color:#24f58a;font-weight:bold}
+header a{color:#24f58a;text-decoration:none}
+main{padding:40px 6%;max-width:1100px;margin:auto}
+.welcome{color:#24f58a;font-size:13px;margin-bottom:12px}
+h1{font-size:30px;margin-bottom:10px}
+.subtitle{color:#abc5b5;margin-bottom:35px}
+.balance{background:linear-gradient(120deg,#0b4027,#092719);padding:30px;border-radius:17px;border:1px solid #24f58a66;box-shadow:0 0 25px #24f58a17;margin-bottom:35px}
+.balance p{color:#b6d5c2;font-size:14px}
+.balance h2{font-size:36px;color:#24f58a;margin-top:12px}
+.packages{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.package{background:#092719;border:1px solid #24f58a33;padding:25px;border-radius:14px}
+.package h3{color:#24f58a;margin-bottom:12px}
+.package p{color:#b6d5c2;font-size:14px;line-height:2}
+.notice{color:#91ac9b;font-size:12px;line-height:1.7;margin-top:25px}
+@media(max-width:600px){.packages{grid-template-columns:1fr}h1{font-size:24px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">🌱 KELLIE'S GREEN FARMS</div>
+<a href="/logout">Logout ↗</a>
+</header>
+<main>
+<div class="welcome">YOUR FARM ACCOUNT</div>
+<h1>Welcome, {{ fullname }}!</h1>
+<p class="subtitle">Welcome to your Kellie's Green Farms dashboard.</p>
+
+<div class="balance">
+<p>AVAILABLE ACCOUNT BALANCE</p>
+<h2>₦{{ "{:,.2f}".format(balance|float) }}</h2>
+</div>
+
+<h2 style="margin-bottom:20px">Agricultural Packages</h2>
+
+<div class="packages">
+<div class="package">
+<h3>BIG SEED</h3>
+<p>Capital: ₦10,000</p>
+<p>Illustrative profit: ₦3,000</p>
+<p>Duration: 30 days</p>
+</div>
+
+<div class="package">
+<h3>MEDIUM</h3>
+<p>Capital: ₦5,000</p>
+<p>Illustrative profit: ₦1,500</p>
+<p>Duration: 30 days</p>
+</div>
+
+<div class="package">
+<h3>SMALL</h3>
+<p>Capital: ₦2,000</p>
+<p>Illustrative profit: ₦600</p>
+<p>Duration: 30 days</p>
+</div>
+
+<div class="package">
+<h3>STARTER</h3>
+<p>Capital: ₦1,000</p>
+<p>Illustrative profit: ₦300</p>
+<p>Duration: 30 days</p>
+</div>
+</div>
+
+<p class="notice">
+Profit figures are illustrative, not guaranteed. Agricultural
+activities involve risks, including possible loss of capital.
+Review the business terms before making any financial commitment.
+</p>
+</main>
+</body>
+</html>

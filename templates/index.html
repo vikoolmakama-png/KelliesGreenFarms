@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kellie's Green Farms | Grow With Agriculture</title>
+<meta name="description" content="Kellie's Green Farms - Explore agricultural farming opportunities in poultry, crops and fish farming.">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --green: #24f58a;
+    --dark: #03170f;
+    --dark2: #08271a;
+    --white: #f4fff8;
+    --muted: #a8c4b3;
+}
+
+body {
+    background: var(--dark);
+    color: var(--white);
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+header {
+    width: 100%;
+    padding: 20px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(36,245,138,.13);
+    background: rgba(3,23,15,.95);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.logo-icon {
+    width: 46px;
+    height: 46px;
+    background: rgba(36,245,138,.12);
+    border: 1px solid var(--green);
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 18px rgba(36,245,138,.2);
+}
+
+.logo-icon svg {
+    width: 30px;
+}
+
+.logo h2 {
+    font-size: 17px;
+    color: white;
+    letter-spacing: .5px;
+}
+
+.logo span {
+    color: var(--green);
+}
+
+nav {
+    display: flex;
+    gap: 27px;
+    align-items: center;
+}
+
+nav a {
+    color: #c5d8cd;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+nav a:hover {
+    color: var(--green);
+}
+
+.nav-btn {
+    padding: 12px 20px;
+    background: var(--green);
+    color: #03170f;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.hero {
+    padding: 100px 7% 85px;
+    min-height: 580px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    background:
+    linear-gradient(90deg,
+        rgba(3,23,15,.96) 0%,
+        rgba(3,23,15,.82) 50%,
+        rgba(3,23,15,.62) 100%),
+    linear-gradient(rgba(5,35,20,.25),rgba(3,23,15,.45)),
+    url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920')
+    center center / cover no-repeat;
+}
+
+.hero:after {
+    content: "";
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    border: 1px solid rgba(36,245,138,.12);
+    right: -100px;
+    top: 70px;
+    box-shadow: 0 0 100px rgba(36,245,138,.08);
+}
+
+.hero-content {
+    max-width: 700px;
+    position: relative;
+    z-index: 2;
+}
+
+.badge {
+    display: inline-block;
+    color: var(--green);
+    border: 1px solid rgba(36,245,138,.4);
+    background: rgba(36,245,138,.08);
+    padding: 10px 17px;
+    border-radius: 30px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+}
+
+.hero h1 {
+    font-size: clamp(38px,6vw,68px);
+    line-height: 1.12;
+    letter-spacing: -2px;
+    margin-bottom: 23px;
+}
+
+.hero h1 span {
+    color: var(--green);
+    text-shadow: 0 0 25px rgba(36,245,138,.35);
+}
+
+.hero p {
+    color: #b8d0c1;
+    font-size: 17px;
+    line-height: 1.8;
+    max-width: 570px;
+    margin-bottom: 32px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background: var(--green);
+    color: #03170f;
+    padding: 16px 25px;
+    border-radius: 9px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 0 22px rgba(36,245,138,.25);
+}
+
+.btn-secondary {
+    border: 1px solid rgba(36,245,138,.5);
+    color: white;
+    padding: 16px 25px;
+    border-radius: 9px;
+    text-decoration: none;
+}
+
+.stats {
+    display: flex;
+    gap: 45px;
+    margin-top: 55px;
+    flex-wrap: wrap;
+}
+
+.stat h3 {
+    color: var(--green);
+    font-size: 25px;
+}
+
+.stat p {
+    font-size: 12px;
+    margin: 5px 0 0;
+}
+
+section {
+    padding: 80px 7%;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.section-title span {
+    color: var(--green);
+    font-size: 12px;
+    letter-spacing: 3px;
+}
+
+.section-title h2 {
+    font-size: 35px;
+    margin: 13px 0;
+}
+
+.section-title p {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.packages {
+    background: #061e14;
+}
+
+.package-grid {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 19px;
+}
+
+.package-card {
+    background: linear-gradient(145deg,#103b27,#082419);
+    border: 1px solid rgba(36,245,138,.2);
+    border-radius: 17px;
+    padding: 28px 22px;
+    transition: .3s;
+    position: relative;
+}
+
+.package-card:hover {
+    transform: translateY(-9px);
+    border-color: var(--green);
+    box-shadow: 0 10px 35px rgba(36,245,138,.12);
+}
+
+.package-card.featured {
+    border-color: var(--green);
+    box-shadow: 0 0 25px rgba(36,245,138,.12);
+}
+
+.package-label {
+    color: var(--green);
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+.package-card h3 {
+    font-size: 28px;
+    margin: 17px 0 7px;
+}
+
+.package-card .amount {
+    font-size: 22px;
+    color: var(--green);
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.package-card p {
+    color: #b2cbbb;
+    font-size: 13px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.package-card p strong {
+    color: white;
+    float: right;
+}
+
+.package-card a {
+    display: block;
+    text-align: center;
+    background: var(--green);
+    color: #03170f;
+    padding: 13px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 23px;
+}
+
+.how-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 25px;
+}
+
+.how-card {
+    background: #0a291b;
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid rgba(36,245,138,.15);
+}
+
+.how-number {
+    width: 43px;
+    height: 43px;
+    background: rgba(36,245,138,.13);
+    color: var(--green);
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.how-card h3 {
+    margin-bottom: 12px;
+}
+
+.how-card p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.cta {
+    text-align: center;
+    background: linear-gradient(120deg,#0b3923,#061d13);
+    border-top: 1px solid rgba(36,245,138,.2);
+    border-bottom: 1px solid rgba(36,245,138,.2);
+}
+
+.cta h2 {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+.cta p {
+    color: var(--muted);
+    margin-bottom: 30px;
+    line-height: 1.7;
+}
+
+footer {
+    padding: 35px 7%;
+    text-align: center;
+    color: #829e8d;
+    font-size: 13px;
+    line-height: 2;
+}
+
+.disclaimer {
+    max-width: 850px;
+    margin: 15px auto 0;
+    font-size: 11px;
+    color: #789786;
+}
+
+@media(max-width:950px) {
+    .package-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+
+@media(max-width:650px) {
+    header {
+        padding: 15px 5%;
+    }
+
+    .logo h2 {
+        font-size: 13px;
+    }
+
+    nav {
+        gap: 10px;
+    }
+
+    nav a:not(.nav-btn) {
+        display: none;
+    }
+
+    .nav-btn {
+        padding: 11px 14px;
+        font-size: 12px;
+    }
+
+    .hero {
+        padding: 75px 6%;
+    }
+
+    .hero h1 {
+        letter-spacing: -1px;
+    }
+
+    .stats {
+        gap: 25px;
+    }
+
+    section {
+        padding: 65px 5%;
+    }
+
+    .package-grid,
+    .how-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-title h2 {
+        font-size: 28px;
+    }
+
+    .cta h2 {
+        font-size: 28px;
+    }
+}
+
+.farm-gallery {
+    background: #041a11;
+}
+
+.farm-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.farm-card {
+    background: #0a291b;
+    border: 1px solid rgba(36,245,138,.18);
+    border-radius: 17px;
+    overflow: hidden;
+    transition: .3s;
+}
+
+.farm-card:hover {
+    transform: translateY(-8px);
+    border-color: #24f58a;
+    box-shadow: 0 10px 35px rgba(36,245,138,.15);
+}
+
+.farm-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    display: block;
+}
+
+.farm-info {
+    padding: 25px;
+}
+
+.farm-info span, .story-label {
+    color: #24f58a;
+    font-size: 11px;
+    letter-spacing: 2px;
+}
+
+.farm-info h3 {
+    margin: 15px 0 10px;
+    font-size: 21px;
+}
+
+.farm-info p, .story-content p {
+    color: #a8c4b3;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.farm-story {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 55px;
+    align-items: center;
+    background: #08271a;
+}
+
+.story-image img {
+    width: 100%;
+    height: 390px;
+    object-fit: cover;
+    border-radius: 18px;
+}
+
+.story-content h2 {
+    font-size: 38px;
+    line-height: 1.3;
+    margin: 20px 0;
+}
+
+.story-content h2 span {
+    color: #24f58a;
+}
+
+.story-content p {
+    margin-bottom: 28px;
+}
+
+@media(max-width:750px) {
+    .farm-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .farm-story {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .story-image img {
+        height: 260px;
+    }
+
+    .story-content h2 {
+        font-size: 30px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <div class="logo-icon">
+            <svg viewBox="0 0 40 40" fill="none">
+                <path d="M20 34V17" stroke="#24f58a" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M20 22C6 22 5 10 5 10C17 7 23 12 20 22Z" fill="#24f58a"/>
+                <path d="M20 17C20 5 32 4 35 5C36 17 29 23 20 17Z" fill="#24f58a"/>
+                <path d="M11 34H29" stroke="#24f58a" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <h2>KELLIE'S <span>GREEN FARMS</span></h2>
+    </div>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#farms">Our Farms</a>
+        <a href="#how">How It Works</a>
+        <a href="/login">Login</a>
+        <a href="/register" class="nav-btn">Join Now</a>
+    </nav>
+</header>
+
+<div class="hero" id="home">
+    <div class="hero-content">
+        <div class="badge">🌱 GROWING A GREENER FUTURE</div>
+
+        <h1>Invest In Agriculture.<br>
+        Start With As Low As <span>₦1,000.</span></h1>
+
+        <p>
+            You don't need big money to participate in agriculture.
+            Explore farming opportunities with Kellie's Green Farms
+            across poultry, crops and fish farming.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="/register" class="btn-primary">Start With ₦1,000 Now →</a>
+            <a href="#packages" class="btn-secondary">Explore Packages</a>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <h3>₦1,000</h3>
+                <p>Starting Package</p>
+            </div>
+            <div class="stat">
+                <h3>30 Days</h3>
+                <p>Illustrative Duration</p>
+            </div>
+            <div class="stat">
+                <h3>4 Plans</h3>
+                <p>Available Packages</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<section class="farm-gallery" id="farms">
+    <div class="section-title">
+        <span>WHAT WE DO</span>
+        <h2>Growing Through Agriculture</h2>
+        <p>Discover the agricultural activities behind Kellie's Green Farms.</p>
+    </div>
+
+    <div class="farm-grid">
+
+        <div class="farm-card">
+            <img src="https://imagens.mdig.com.br/food/mandioca_nigeria_01.jpg"
+                 alt="Beautiful green agricultural farmland">
+            <div class="farm-info">
+                <span>01 / CASSAVA FARMING</span>
+                <h3>Cassava Farming</h3>
+                <p>Producing agricultural crops and supporting sustainable farming practices.</p>
+            </div>
+        </div>
+
+        <div class="farm-card">
+            <img src="https://agribusiness.africa/wp-content/uploads/2024/05/Poultry-farming.jpg"
+                 alt="Green countryside and farmland">
+            <div class="farm-info">
+                <span>02 / POULTRY FARMING</span>
+                <h3>Poultry Farming</h3>
+                <p>Developing productive farmland and supporting agricultural activities.</p>
+            </div>
+        </div>
+
+        <div class="farm-card">
+            <img src="https://www.fao.org/fileadmin/user_upload/FISH4ACP/imgs/Nigeria_20230920_03.jpg"
+                 alt="Agricultural planting and cultivation">
+            <div class="farm-info">
+                <span>03 / FISH FARMING</span>
+                <h3>Fish Farming</h3>
+                <p>Encouraging productive farming and responsible agricultural development.</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="farm-story">
+    <div class="story-image">
+        <img src="https://www.suprememagazine.news/h-upload/2023/03/09/1500x900_726185-onion-farming-in-nigeria-ls.webp"
+             alt="Agricultural farmland">
+    </div>
+
+    <div class="story-content">
+        <span class="story-label">04 / NIGERIAN CROP FARMING</span>
+        <h2>Growing Agriculture.<br><span>Building Tomorrow.</span></h2>
+        <p>
+            At Kellie's Green Farms, we believe agriculture plays an
+            important role in building a stronger future.
+            Our agricultural interests include poultry, crop production
+            and fish farming.
+        </p>
+        <a href="/register" class="btn-primary">Join Our Community →</a>
+    </div>
+</section>
+
+
+<section id="how">
+    <div class="section-title">
+        <span>OUR PROCESS</span>
+        <h2>How It Works</h2>
+        <p>Understand how our agricultural participation process works.</p>
+    </div>
+
+    <div class="how-grid">
+        <div class="how-card">
+            <div class="how-number">01</div>
+            <h3>Choose Your Package</h3>
+            <p>Explore the available packages and select an amount that suits your budget.</p>
+        </div>
+
+        <div class="how-card">
+            <div class="how-number">02</div>
+            <h3>Support Farming</h3>
+            <p>Your participation supports agricultural activities including poultry, crops and fish farming.</p>
+        </div>
+
+        <div class="how-card">
+            <div class="how-number">03</div>
+            <h3>Harvest & Settlement</h3>
+            <p>Farming results are assessed and any settlement is determined by actual performance and the agreed terms.</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <h2>Let's Grow Together 🌱</h2>
+    <p>Take the first step towards supporting agriculture.<br>
+    Explore Kellie's Green Farms today.</p>
+    <a href="/register" class="btn-primary">Create Your Account →</a>
+</section>
+
+<footer>
+    <h3>KELLIE'S GREEN FARMS</h3>
+    <p>Growing Agriculture. Building Tomorrow.</p>
+    <div class="disclaimer">
+        Important: All profit figures displayed are illustrative projections,
+        not guaranteed returns. Agricultural activities involve risks,
+        including possible loss of capital. Actual outcomes depend on
+        farm performance and applicable agreements.
+    </div>
+    <p style="margin-top:20px;">© 2026 Kellie's Green Farms. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

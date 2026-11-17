@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create Account | Kellie's Green Farms</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial;background:linear-gradient(rgba(2,22,13,.94),rgba(2,22,13,.96)),url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200') center/cover fixed;color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:25px}
+.card{width:100%;max-width:460px;background:#092719;border:1px solid #24f58a55;border-radius:20px;padding:35px;box-shadow:0 0 40px #24f58a18}
+.logo{text-align:center;color:#24f58a;font-size:25px;font-weight:bold;margin-bottom:10px}
+.subtitle{text-align:center;color:#abc5b5;font-size:14px;margin-bottom:27px}
+h2{text-align:center;margin-bottom:23px}
+label{display:block;font-size:13px;margin-bottom:8px;color:#d6e9dd}
+input{width:100%;padding:15px;margin-bottom:18px;background:#031a10;border:1px solid #285c40;border-radius:9px;color:white;outline:none}
+input:focus{border-color:#24f58a;box-shadow:0 0 10px #24f58a30}
+button{width:100%;padding:16px;background:#24f58a;color:#03170f;border:0;border-radius:9px;font-weight:bold;font-size:15px;cursor:pointer}
+button:hover{box-shadow:0 0 20px #24f58a77}
+.bottom{text-align:center;margin-top:22px;font-size:14px;color:#abc5b5}
+a{color:#24f58a;text-decoration:none}
+.message{padding:12px;background:#462020;border-radius:8px;color:#ffbebe;margin-bottom:15px;font-size:13px}
+.message.success{background:#12452b;color:#a9ffca}
+.back{text-align:center;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="logo">🌱 KELLIE'S GREEN FARMS</div>
+<div class="subtitle">Growing Agriculture. Building Tomorrow.</div>
+<h2>Create Your Account</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% for category, message in messages %}
+<div class="message {{ category }}">{{ message }}</div>
+{% endfor %}
+{% endwith %}
+
+<form method="POST">
+<input type="hidden" name="referral_code" value="{{ request.args.get('ref', '') }}">
+<label>Full Name</label>
+<input type="text" name="fullname" placeholder="Enter your full name" required>
+
+<label>Email Address</label>
+<input type="email" name="email" placeholder="Enter your email" required>
+
+<label>Username</label>
+<input type="text" name="username" placeholder="Choose a username" required>
+
+<label>Password</label>
+<input type="password" name="password" placeholder="Minimum 8 characters" minlength="8" required>
+
+<label>Confirm Password</label>
+<input type="password" name="confirm_password" placeholder="Repeat your password" required>
+
+<button type="submit">CREATE ACCOUNT →</button>
+</form>
+
+<div class="bottom">
+Already have an account? <a href="/login">Login</a>
+</div>
+
+<div class="back"><a href="/">← Back to Homepage</a></div>
+</div>
+</body>
+</html>

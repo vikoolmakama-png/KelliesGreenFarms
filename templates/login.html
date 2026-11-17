@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login | Kellie's Green Farms</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial;background:linear-gradient(rgba(2,22,13,.93),rgba(2,22,13,.97)),url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200') center/cover fixed;color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:25px}
+.card{width:100%;max-width:430px;background:#092719;border:1px solid #24f58a55;border-radius:20px;padding:35px;box-shadow:0 0 40px #24f58a18}
+.logo{text-align:center;color:#24f58a;font-size:24px;font-weight:bold;margin-bottom:12px}
+.subtitle{text-align:center;color:#abc5b5;font-size:14px;margin-bottom:35px}
+h2{text-align:center;margin-bottom:25px}
+label{display:block;font-size:13px;margin-bottom:9px}
+input{width:100%;padding:16px;margin-bottom:22px;background:#031a10;border:1px solid #285c40;border-radius:9px;color:white;outline:none}
+input:focus{border-color:#24f58a;box-shadow:0 0 10px #24f58a30}
+button{width:100%;padding:16px;background:#24f58a;color:#03170f;border:0;border-radius:9px;font-weight:bold;font-size:15px;cursor:pointer}
+.message{padding:12px;background:#462020;border-radius:8px;color:#ffbebe;margin-bottom:15px;font-size:13px}
+.message.success{background:#12452b;color:#a9ffca}
+.bottom{text-align:center;margin-top:25px;color:#abc5b5;font-size:14px}
+a{color:#24f58a;text-decoration:none}
+.back{text-align:center;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="logo">🌱 KELLIE'S GREEN FARMS</div>
+<div class="subtitle">Welcome Back To Your Farm Community</div>
+<h2>Account Login</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% for category, message in messages %}
+<div class="message {{ category }}">{{ message }}</div>
+{% endfor %}
+{% endwith %}
+
+<form method="POST">
+<label>Username or Email</label>
+<input type="text" name="identity" placeholder="Enter username or email" required>
+
+<label>Password</label>
+<input type="password" name="password" placeholder="Enter your password" required>
+
+<button type="submit">LOGIN TO YOUR ACCOUNT →</button>
+</form>
+
+<div class="bottom">
+Don't have an account? <a href="/register">Register Now</a>
+</div>
+<div class="back"><a href="/">← Back to Homepage</a></div>
+</div>
+</body>
+</html>

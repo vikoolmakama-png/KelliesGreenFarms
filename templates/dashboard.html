@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kellie's Green Farms Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#03170f;color:white}
+header{padding:18px 5%;display:flex;justify-content:space-between;align-items:center;background:#08271a;border-bottom:1px solid #24f58a55}
+.logo{color:#24f58a;font-weight:bold}
+a{color:#24f58a;text-decoration:none}
+main{max-width:1100px;margin:auto;padding:30px 5%}
+.welcome{color:#24f58a;font-size:13px;margin-bottom:12px}
+h1{font-size:28px;margin-bottom:10px}
+.subtitle{color:#abc5b5;margin-bottom:25px}
+.balance{background:linear-gradient(120deg,#0b4027,#092719);padding:25px;border-radius:17px;border:1px solid #24f58a66;margin-bottom:22px}
+.balance p{color:#b6d5c2;font-size:13px}
+.balance h2{font-size:34px;color:#24f58a;margin-top:12px}
+
+.active-farm{background:linear-gradient(130deg,#0b4027,#062719);border:1px solid #24f58a88;border-radius:16px;padding:22px;margin:22px 0 30px;box-shadow:0 0 22px #24f58a22}
+.active-heading{color:#24f58a;font-size:12px;font-weight:bold;margin-bottom:12px}
+.active-farm h2{margin-bottom:12px;color:#fff}
+.active-farm p{color:#c1d8ca;font-size:14px;line-height:1.9}
+.active-farm strong{color:#24f58a}
+.claim-button{width:100%;margin:18px 0 10px;padding:16px;border:1px solid #65ffad;border-radius:10px;background:linear-gradient(90deg,#087a42,#12a85b);color:white;font-weight:bold;font-size:15px;box-shadow:0 0 18px #24f58a55;cursor:pointer}
+.claim-button:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.active-farm small{color:#9bb9a7;font-size:11px}
+.claim-message{padding:14px;margin:12px 0;background:#0d5733;border:1px solid #54ffa0;border-radius:10px;color:#baffd5}
+
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:35px}
+.action{background:#0b3020;border:1px solid #24f58a66;padding:17px 8px;border-radius:12px;text-align:center;font-weight:bold}
+.action:hover,.activate:hover{background:#12633b}form .activate{width:100%;border:0;cursor:pointer;font-size:15px}
+h2.section{font-size:22px;margin-bottom:18px}
+.packages{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.package{background:#092719;border:1px solid #24f58a44;border-radius:15px;overflow:hidden}
+.package img{width:100%;height:170px;object-fit:cover;display:block}
+.package-content{padding:20px}
+.package h3{color:#24f58a;margin-bottom:10px}
+.package p{color:#c1d8ca;font-size:14px;line-height:1.9}
+.activate{display:block;text-align:center;background:#087a42;color:white;padding:13px;border-radius:9px;margin-top:15px;font-weight:bold}
+.notice{color:#91ac9b;font-size:12px;line-height:1.7;margin-top:25px}
+@media(max-width:650px){.packages{grid-template-columns:1fr}.actions{grid-template-columns:repeat(2,1fr)}h1{font-size:23px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">🌱 KELLIE'S GREEN FARMS</div>
+<a href="/logout">Logout ↗</a>
+</header>
+<main>
+<div class="welcome">YOUR FARM ACCOUNT</div>
+<h1>Welcome, {{ fullname }}!</h1>
+<p class="subtitle">Manage your farm account and activities.</p>
+
+<div class="balance">
+<p>AVAILABLE ACCOUNT BALANCE</p>
+<h2>₦{{ "{:,.2f}".format(balance|float) }}</h2>
+</div>
+
+{% if request.args.get('claim') == 'success' %}
+<div class="claim-message">✓ Reward successfully added to your balance.</div>
+{% endif %}
+
+{% if active_plan %}
+<section class="active-farm">
+    <div class="active-heading">🌱 YOUR ACTIVE FARM PLAN</div>
+    <h2>{{ active_plan[1] }}</h2>
+    <p>Daily reward: <strong>₦{{ "{:,.2f}".format(active_plan[2]|float) }}</strong></p>
+    <p>Rewards claimed: <strong>{{ active_plan[3] }}/30</strong></p>
+    <p>Next claim time: {{ active_plan[4] }}</p>
+    {% if active_plan[6] %}
+    <form method="POST" action="/claim-reward/{{ active_plan[0] }}">
+        <button class="claim-button" type="submit">
+            CLAIM REWARD · ₦{{ "{:,.2f}".format(active_plan[2]|float) }}
+        </button>
+    </form>
+    {% else %}
+    <button class="claim-button" type="button" disabled>
+        REWARD NOT READY — 24-HOUR WAIT
+    </button>
+    {% endif %}
+    <small>One claim every 24 hours. Maximum 30 claims.</small>
+</section>
+{% endif %}
+
+<div class="actions">
+<a class="action" href="/deposit">💳<br><br>Deposit</a>
+<a class="action" href="/withdraw">💸<br><br>Withdrawal</a>
+<a class="action" href="/referrals">👥<br><br>Referrals</a>
+<a class="action" href="/history">📋<br><br>History</a>
+</div>
+
+<h2 class="section">Agricultural Packages</h2>
+<div class="packages">
+
+<div class="package">
+<img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=900" alt="Green crop farm">
+<div class="package-content">
+<h3>BIG SEED</h3>
+<p>Capital: ₦10,000</p>
+<p>Daily reward: ₦700</p><p>Total reward after 30 days: ₦21,000</p>
+<p>Duration: 30 days</p>
+<form method="POST" action="/activate/big"><button class="activate" type="submit">Activate Plan</button></form>
+</div></div>
+
+<div class="package">
+<img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=900" alt="Agricultural field">
+<div class="package-content">
+<h3>MEDIUM</h3>
+<p>Capital: ₦5,000</p>
+<p>Daily reward: ₦400</p><p>Total reward after 30 days: ₦12,000</p>
+<p>Duration: 30 days</p>
+<form method="POST" action="/activate/medium"><button class="activate" type="submit">Activate Plan</button></form>
+</div></div>
+
+<div class="package">
+<img src="https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?w=900" alt="Farm crops">
+<div class="package-content">
+<h3>SMALL</h3>
+<p>Capital: ₦2,000</p>
+<p>Daily reward: ₦300</p><p>Total reward after 30 days: ₦9,000</p>
+<p>Duration: 30 days</p>
+<form method="POST" action="/activate/small"><button class="activate" type="submit">Activate Plan</button></form>
+</div></div>
+
+<div class="package">
+<img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=900" alt="Crop cultivation">
+<div class="package-content">
+<h3>STARTER</h3>
+<p>Capital: ₦1,000</p>
+<p>Daily reward: ₦200</p><p>Total reward after 30 days: ₦6,000</p>
+<p>Duration: 30 days</p>
+<form method="POST" action="/activate/starter"><button class="activate" type="submit">Activate Plan</button></form>
+</div></div>
+
+</div>
+
+<p class="notice">
+Rewards are claimed manually after each 24-hour waiting period.
+All reward figures are illustrative, not guaranteed. Agricultural activities
+involve risk, including possible loss of capital. Review the business terms
+before making a financial commitment.
+</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,231 @@
+import os
+import re
+import psycopg2
+
+from flask import (
+    Flask, render_template, request,
+    redirect, url_for, session, flash
+)
+from werkzeug.security import (
+    generate_password_hash, check_password_hash
+)
+from functools import wraps
+
+app = Flask(__name__)
+
+app.secret_key = os.environ.get(
+    "FLASK_SECRET_KEY",
+    "change-this-secret-before-production"
+)
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+def get_db():
+    if DATABASE_URL:
+        return psycopg2.connect(DATABASE_URL)
+    return psycopg2.connect(dbname="kellies_green_farms")
+
+
+def init_db():
+    con = get_db()
+    cur = con.cursor()
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            fullname VARCHAR(120) NOT NULL,
+            email VARCHAR(150) UNIQUE NOT NULL,
+            username VARCHAR(50) UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            balance NUMERIC(12,2) DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    cur.execute("""
+        CREATE INDEX IF NOT EXISTS users_email_idx
+        ON users(email)
+    """)
+
+    con.commit()
+    cur.close()
+    con.close()
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if "user_id" not in session:
+            flash("Please login to continue.", "error")
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated
+
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+
+    if request.method == "POST":
+
+        fullname = request.form.get("fullname", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        username = request.form.get("username", "").strip().lower()
+        password = request.form.get("password", "")
+        confirm = request.form.get("confirm_password", "")
+
+        if not all([fullname, email, username, password, confirm]):
+            flash("Please complete all fields.", "error")
+            return redirect(url_for("register"))
+
+        if len(fullname) > 120:
+            flash("Full name is too long.", "error")
+            return redirect(url_for("register"))
+
+        if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+            flash("Enter a valid email address.", "error")
+            return redirect(url_for("register"))
+
+        if not re.fullmatch(r"[a-z0-9_]{3,30}", username):
+            flash("Username must be 3-30 characters using letters, numbers or underscores.", "error")
+            return redirect(url_for("register"))
+
+        if len(password) < 8:
+            flash("Password must contain at least 8 characters.", "error")
+            return redirect(url_for("register"))
+
+        if password != confirm:
+            flash("Passwords do not match.", "error")
+            return redirect(url_for("register"))
+
+        password_hash = generate_password_hash(password)
+
+        con = get_db()
+        cur = con.cursor()
+
+        try:
+            cur.execute("""
+                INSERT INTO users
+                (name, username, email, password, full_name, fullname, password_hash)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                RETURNING id
+            """, (
+                fullname,
+                username,
+                email,
+                password_hash,
+                fullname,
+                fullname,
+                password_hash
+            ))
+            user_id = cur.fetchone()[0]
+            con.commit()
+
+            session.clear()
+            session["user_id"] = user_id
+            session["username"] = username
+            session["fullname"] = fullname
+
+            cur.close()
+            con.close()
+
+            return redirect(url_for("dashboard"))
+
+        except psycopg2.errors.UniqueViolation:
+            con.rollback()
+            cur.close()
+            con.close()
+            flash("Email or username already exists.", "error")
+            return redirect(url_for("register"))
+
+        except Exception:
+            con.rollback()
+            cur.close()
+            con.close()
+            app.logger.exception("Registration failed")
+            flash("Registration failed. Please try again.", "error")
+            return redirect(url_for("register"))
+
+    return render_template("register.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+
+        identity = request.form.get("identity", "").strip().lower()
+        password = request.form.get("password", "")
+
+        con = get_db()
+        cur = con.cursor()
+
+        cur.execute("""
+            SELECT id, fullname, username, password_hash
+            FROM users
+            WHERE email = %s OR username = %s
+        """, (identity, identity))
+
+        user = cur.fetchone()
+
+        cur.close()
+        con.close()
+
+        if user and check_password_hash(user[3], password):
+
+            session.clear()
+            session["user_id"] = user[0]
+            session["fullname"] = user[1]
+            session["username"] = user[2]
+
+            return redirect(url_for("dashboard"))
+
+        flash("Incorrect username, email or password.", "error")
+        return redirect(url_for("login"))
+
+    return render_template("login.html")
+
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+
+    con = get_db()
+    cur = con.cursor()
+
+    cur.execute(
+        "SELECT balance FROM users WHERE id = %s",
+        (session["user_id"],)
+    )
+
+    result = cur.fetchone()
+
+    cur.close()
+    con.close()
+
+    if not result:
+        session.clear()
+        return redirect(url_for("login"))
+
+    return render_template(
+        "dashboard.html",
+        fullname=session["fullname"],
+        username=session["username"],
+        balance=result[0]
+    )
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("You have logged out successfully.", "success")
+    return redirect(url_for("login"))
+
+
+if __name__ == "__main__":
+    init_db()
+    app.run(host="0.0.0.0", port=5000, debug=True)
